@@ -52,11 +52,17 @@ URLMAP = {
 SLUG_SET = {p["slug"] for p in posts}
 
 
+# WordPress appends its own navigation, related posts and comment form inside
+# entry-content. The rebuilt pages provide their own, so cut the import here.
 COMMENT_MARKERS = (
     "cancel-comment-reply-link",
     "Leave a Reply",
     "Your email address will not be published",
     "This site uses Akismet",
+    "Post navigation",
+    "Previous post:",
+    "Next post:",
+    "Related Posts",
 )
 
 
@@ -68,7 +74,13 @@ def strip_comments(body):
         if i != -1:
             start = body.rfind("<", 0, i)
             cut = min(cut, start if start != -1 else i)
-    return body[:cut].rstrip()
+    body = body[:cut].rstrip()
+    # a heading with nothing under it is an artefact of the cut, drop it
+    while True:
+        stripped = re.sub(r"<h[2-4]>[^<]*</h[2-4]>\s*$", "", body).rstrip()
+        if stripped == body:
+            return body
+        body = stripped
 
 
 def rewrite_links(body):

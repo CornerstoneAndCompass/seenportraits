@@ -313,7 +313,8 @@ def build_one(path):
 
     page = "".join(parts)
     # house style: no em dashes anywhere, including in imported blog copy
-    page = page.replace("—", ", ").replace("&mdash;", ", ")
+    for dash in ("—", "&mdash;", "&#8212;", "&#x2014;", "&#X2014;"):
+        page = page.replace(dash, ", ")
     page = re.sub(r" ,\s+", ", ", page)
     page = re.sub(r",\s{2,}", ", ", page)
 
