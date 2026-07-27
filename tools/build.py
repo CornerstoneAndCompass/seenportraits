@@ -140,7 +140,7 @@ def head(meta):
 <link rel="icon" href="assets/img/SEEN-favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&family=Marcellus&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{css}">
 </head>
 <body>
@@ -275,6 +275,7 @@ LIGHTBOX = """
   <button class="lbox__nav lbox__prev" type="button" aria-label="Previous">&#8249;</button>
   <img alt="">
   <button class="lbox__nav lbox__next" type="button" aria-label="Next">&#8250;</button>
+  <div class="lbox__cap"></div>
   <div class="lbox__count"></div>
 </div>
 """
@@ -312,6 +313,17 @@ def build_one(path):
     parts.append("\n</body>\n</html>\n")
 
     page = "".join(parts)
+
+    # Section numerals are sequential per page. Authors do not maintain them,
+    # because removing or adding a section used to leave gaps and repeats.
+    n = [0]
+
+    def renumber(m):
+        n[0] += 1
+        return '%s%02d%s' % (m.group(1), n[0], m.group(3))
+
+    page = re.sub(r'(<div class="shead__num">)\s*([0-9]{2}|&mdash;|—)\s*(</div>)',
+                  renumber, page)
     # house style: no em dashes anywhere, including in imported blog copy
     for dash in ("—", "&mdash;", "&#8212;", "&#x2014;", "&#X2014;"):
         page = page.replace(dash, ", ")

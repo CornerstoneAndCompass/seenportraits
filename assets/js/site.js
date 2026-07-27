@@ -15,11 +15,18 @@
   var mast = document.querySelector('.mast');
   if (mast) {
     var lastY = -1;
+    var prevY = 0;
     var onScroll = function () {
       var y = window.pageYOffset || document.documentElement.scrollTop;
       if (y === lastY) return;
-      lastY = y;
       mast.classList.toggle('is-stuck', y > 12);
+      /* retract on the way down, return the moment they scroll back up */
+      var down = y > prevY && y > 220;
+      if (!document.body.classList.contains('nav-open')) {
+        mast.classList.toggle('is-hidden', down);
+      }
+      prevY = y;
+      lastY = y;
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -56,12 +63,71 @@
     });
   }
 
+  /* --- headlines are split into words so they can rise individually --- */
+  function splitWords(el) {
+    if (el.dataset.split) return;
+    var out = [];
+    var i = 0;
+    Array.prototype.forEach.call(el.childNodes, function (node) {
+      if (node.nodeType === 3) {
+        node.textContent.split(/(\s+)/).forEach(function (chunk) {
+          if (!chunk.trim()) { out.push(document.createTextNode(chunk)); return; }
+          var outer = document.createElement('span');
+          outer.className = 'w';
+          var inner = document.createElement('span');
+          inner.className = 'w__i';
+          inner.textContent = chunk;
+          inner.style.transitionDelay = (i * 0.055).toFixed(3) + 's';
+          i++;
+          outer.appendChild(inner);
+          out.push(outer);
+        });
+      } else {
+        out.push(node.cloneNode(true));
+      }
+    });
+    el.innerHTML = '';
+    out.forEach(function (n) { el.appendChild(n); });
+    el.dataset.split = '1';
+  }
+
+  /* Only split headings made purely of text and line breaks, so nested
+     markup such as <strong> or a link is never destroyed. */
+  function splittable(el) {
+    return Array.prototype.every.call(el.childNodes, function (n) {
+      return n.nodeType === 3 || n.tagName === 'BR';
+    });
+  }
+
+  if (!reduce) {
+    /* Tier 1, once per page. The page's own headline, and the interlude line
+       if the page has one. Nothing else gets the title-sequence treatment. */
+    document.querySelectorAll('h1.d1, h1.d2, .plate__line').forEach(function (el) {
+      if (splittable(el)) { splitWords(el); el.classList.add('reveal-w'); }
+    });
+
+    /* Tier 2, full-bleed and feature photography only. These wipe open. */
+    document.querySelectorAll('.split__media > .ph, .hero__plate, .mapframe, .capture > .ph')
+      .forEach(function (el) { el.setAttribute('data-media', ''); });
+
+    /* Tier 3, everything in a grid. A quiet settle with an index stagger, so
+       eight tiles read as one gesture rather than eight events. */
+    document.querySelectorAll('.gal, .cols, .deliv').forEach(function (grid) {
+      var tiles = grid.children;
+      for (var t = 0; t < tiles.length; t++) {
+        if (tiles[t].hasAttribute('data-media')) continue;
+        tiles[t].setAttribute('data-tile', '');
+        tiles[t].style.setProperty('--i', t);
+      }
+    });
+  }
+
   /* --- reveal on scroll ---------------------------------------------- */
-  var rises = document.querySelectorAll('[data-rise]');
-  if (!rises.length) {
+  var watched = document.querySelectorAll('[data-rise], [data-media], [data-tile], .reveal-w, .hr');
+  if (!watched.length) {
     /* nothing to do */
   } else if (reduce || !('IntersectionObserver' in window)) {
-    for (var i = 0; i < rises.length; i++) rises[i].classList.add('is-in');
+    for (var i = 0; i < watched.length; i++) watched[i].classList.add('is-in');
   } else {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
@@ -71,8 +137,52 @@
         }
       });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-    for (var j = 0; j < rises.length; j++) io.observe(rises[j]);
+    for (var j = 0; j < watched.length; j++) io.observe(watched[j]);
   }
+
+  /* --- parallax, a slow drift on the full-bleed photography ----------- */
+  if (!reduce) {
+    var layers = [];
+    document.querySelectorAll('.plate__bg img, .hero--plate .hero__bg img').forEach(function (img) {
+      img.setAttribute('data-parallax', '');
+      layers.push({ el: img, box: img.closest('.plate, .hero') || img.parentElement });
+    });
+    if (layers.length) {
+      /* give the image room to travel without exposing an edge */
+      layers.forEach(function (l) { l.el.style.height = '118%'; l.el.style.top = '-9%'; l.el.style.position = 'absolute'; });
+      var ticking = false;
+      var drift = function () {
+        var vh = window.innerHeight;
+        layers.forEach(function (l) {
+          var r = l.box.getBoundingClientRect();
+          if (r.bottom < -200 || r.top > vh + 200) return;
+          var progress = (r.top + r.height / 2 - vh / 2) / vh;   /* -1 .. 1 */
+          l.el.style.transform = 'translate3d(0,' + (progress * -7).toFixed(2) + '%,0)';
+        });
+        ticking = false;
+      };
+      var onDrift = function () {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(drift);
+      };
+      drift();
+      window.addEventListener('scroll', onDrift, { passive: true });
+      window.addEventListener('resize', onDrift);
+    }
+  }
+
+  /* --- gallery frames name themselves on hover ----------------------- */
+  document.querySelectorAll('.gal').forEach(function (gal) {
+    Array.prototype.forEach.call(gal.querySelectorAll('button'), function (b, n) {
+      if (b.querySelector('.gal__n')) return;
+      var tag = document.createElement('span');
+      tag.className = 'gal__n';
+      tag.setAttribute('aria-hidden', 'true');
+      tag.textContent = String(n + 1).padStart(2, '0');
+      b.appendChild(tag);
+    });
+  });
 
   /* --- gallery lightbox ---------------------------------------------- */
   var lbox = document.querySelector('.lbox');
@@ -83,14 +193,29 @@
     var index = 0;
     var lastFocus = null;
 
+    var lCap = lbox.querySelector('.lbox__cap');
+
+    function paint(n) {
+      index = (n + group.length) % group.length;
+      var frame = group[index];
+      lImg.src = frame.getAttribute('data-full') || frame.querySelector('img').src;
+      lImg.alt = frame.querySelector('img').alt || '';
+      if (lCap) lCap.textContent = lImg.alt;
+      if (lCount) {
+        lCount.innerHTML = '<b>' + String(index + 1).padStart(2, '0') + '</b> / '
+                         + String(group.length).padStart(2, '0');
+      }
+    }
+
+    /* frames cross-fade rather than snapping to a new src */
     function show(n) {
       if (!group.length) return;
-      index = (n + group.length) % group.length;
-      var src = group[index].getAttribute('data-full') || group[index].querySelector('img').src;
-      var alt = group[index].querySelector('img').alt || '';
-      lImg.src = src;
-      lImg.alt = alt;
-      if (lCount) lCount.textContent = (index + 1) + ' / ' + group.length;
+      if (!lbox.classList.contains('is-open') || reduce) { paint(n); return; }
+      lbox.classList.add('is-swapping');
+      window.setTimeout(function () {
+        paint(n);
+        lbox.classList.remove('is-swapping');
+      }, 190);
     }
 
     function openLb(btn) {
