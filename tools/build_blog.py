@@ -20,6 +20,44 @@ ROUTES = [
     (r"exhibition|beneath|opening|skin", ("empowering-portraits-series.html", "Empowering Portraits Series", "A limited-time series celebrating the power and beauty of the modern woman.")),
 ]
 
+
+def dims(rel):
+    """Real pixel size of an asset, so declared width and height stay honest."""
+    f = ROOT / rel
+    b = f.read_bytes()
+    if b[:2] == b"\xff\xd8":                                  # jpeg, walk to a frame header
+        i = 2
+        while i < len(b) - 9:
+            if b[i] != 0xFF:
+                i += 1
+                continue
+            m = b[i + 1]
+            if m in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7,
+                     0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF):
+                h = int.from_bytes(b[i + 5:i + 7], "big")
+                w = int.from_bytes(b[i + 7:i + 9], "big")
+                return w, h
+            if m in (0xD8, 0xD9) or 0xD0 <= m <= 0xD7:
+                i += 2
+            else:
+                i += 2 + int.from_bytes(b[i + 2:i + 4], "big")
+    elif b[:8] == b"\x89PNG\r\n\x1a\n":
+        return (int.from_bytes(b[16:20], "big"), int.from_bytes(b[20:24], "big"))
+    elif b[:4] == b"RIFF" and b[8:12] == b"WEBP":
+        if b[12:16] == b"VP8X":
+            return (int.from_bytes(b[24:27], "little") + 1,
+                    int.from_bytes(b[27:30], "little") + 1)
+        if b[12:16] == b"VP8 ":
+            return (int.from_bytes(b[26:28], "little") & 0x3FFF,
+                    int.from_bytes(b[28:30], "little") & 0x3FFF)
+        if b[12:16] == b"VP8L":
+            n = int.from_bytes(b[21:25], "little")
+            return ((n & 0x3FFF) + 1, ((n >> 14) & 0x3FFF) + 1)
+    raise SystemExit("cannot read dimensions: " + rel)
+
+CTA_IMG = 'assets/img/cheltenham-boudoir-photographer-for-brides.webp'
+
+
 def route(p):
     hay = (p["slug"] + " " + p["title"]).lower()
     for pat, dest in ROUTES:
@@ -147,14 +185,14 @@ out.append(f'''<!-- FEATURED STORY =============================================
         <h1 class="d2">Melbourne&rsquo;s latest photo shoots, studio events and client stories</h1>
     </div>
 
-    <a class="split split--wide-r" href="blog-{feat['slug']}.html" data-rise style="align-items:center">
-      <div class="ph ph-3x2"><img src="{feat['hero']}" alt="" width="1280" height="853"></div>
+    <a class="split split--wide-l" href="blog-{feat['slug']}.html" data-rise style="align-items:center">
       <div class="stack-s">
         <p class="kicker">{html.escape(feat['cat'])} &middot; {html.escape(feat['date'])}</p>
         <h2 class="d3">{html.escape(feat['title'])}</h2>
         <p class="pcard__line">{excerpt(feat)}</p>
         <p><span class="tlink">Read the story <span aria-hidden="true">&rarr;</span></span></p>
       </div>
+      <div class="split__media"><div class="ph ph-3x2"><img src="{feat['hero']}" alt="{html.escape(feat['title'])}" width="{dims(feat['hero'])[0]}" height="{dims(feat['hero'])[1]}"></div></div>
     </a>
   </div>
 </section>
@@ -171,7 +209,7 @@ out.append(f'''<!-- FEATURED STORY =============================================
 
 for i, p in enumerate(rest[:3]):
     out.append(f'''      <a class="pcard" href="blog-{p['slug']}.html" data-rise data-d="{i}">
-        <div class="ph ph-16x9"><img src="{p['hero']}" alt="" width="1280" height="853" loading="lazy"></div>
+        <div class="ph ph-16x9"><img src="{p['hero']}" alt="{html.escape(p['title'])}" width="{dims(p['hero'])[0]}" height="{dims(p['hero'])[1]}" loading="lazy"></div>
         <div class="pcard__body">
           <span class="pcard__eyebrow">{html.escape(p['cat'])} &middot; {html.escape(p['date'])}</span>
           <h3 class="pcard__title">{html.escape(p['title'])}</h3>
@@ -240,7 +278,7 @@ for idx, p in enumerate(posts):
 
     rel = "\n".join(
         f'''      <a class="pcard" href="blog-{q['slug']}.html" data-rise data-d="{i}">
-        <div class="ph ph-16x9"><img src="{q['hero']}" alt="" width="1280" height="853" loading="lazy"></div>
+        <div class="ph ph-16x9"><img src="{q['hero']}" alt="{html.escape(q['title'])}" width="{dims(q['hero'])[0]}" height="{dims(q['hero'])[1]}" loading="lazy"></div>
         <div class="pcard__body">
           <span class="pcard__eyebrow">{html.escape(q['cat'])}</span>
           <h3 class="pcard__title">{html.escape(q['title'])}</h3>
@@ -276,7 +314,7 @@ for idx, p in enumerate(posts):
 <section class="band band--flush-t band--slim">
   <div class="wrap">
     <div class="ph ph-16x9" data-rise>
-      <img src="{p['hero']}" alt="{html.escape(p['title'])}" width="1280" height="853">
+      <img src="{p['hero']}" alt="{html.escape(p['title'])}" width="{dims(p['hero'])[0]}" height="{dims(p['hero'])[1]}">
     </div>
   </div>
 </section>

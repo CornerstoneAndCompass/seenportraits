@@ -146,7 +146,7 @@ def head(meta):
 <meta property="og:image" content="{SITE}/{share}">
 <meta property="og:site_name" content="SEEN Portraits">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="assets/img/SEEN-favicon.png">
+<link rel="icon" href="assets/img/cropped-SEEN-favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://link.seenportraits.com.au">
@@ -198,8 +198,7 @@ def masthead(active):
 <header class="mast">
   <div class="wrap mast__in">
     <a class="brand" href="index.html" aria-label="SEEN Portraits, home">
-      <span class="brand__word">SEEN</span>
-      <span class="brand__sub">Portraits</span>
+      <img class="brand__img" src="assets/img/SEEN-logo-horizontal-brown-crop.png" alt="" width="660" height="172">
     </a>
 
     <nav class="nav" aria-label="Main">
@@ -230,7 +229,7 @@ def footer():
   <div class="wrap foot__in">
     <div class="foot__grid">
       <div class="foot__brand">
-        <span class="brand__word">SEEN</span>
+        <img class="brand__img brand__img--foot" src="assets/img/SEEN-logo-horizontal-brown-crop.png" alt="SEEN Portraits" width="660" height="172">
         <p>Photography studio in Cheltenham, serving Melbourne&rsquo;s Bayside and Mornington Peninsula.</p>
         <p style="margin-top:.9rem">
           <a href="{PHONE_HREF}">{PHONE}</a><br>
