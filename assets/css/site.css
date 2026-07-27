@@ -685,6 +685,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 .ph img {
   width: 100%; height: 100%;
   object-fit: cover;
+  object-position: 50% 30%;
   filter: sepia(.16) saturate(.88) contrast(1.03);
   transition: filter 1.1s var(--ease), transform 1.4s var(--ease);
 }
