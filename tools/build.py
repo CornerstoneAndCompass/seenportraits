@@ -72,13 +72,20 @@ ADDRESS = "35 Belrose Avenue, Cheltenham, Vic 3192"
 CALENDLY = "https://calendly.com/marina_morgan/discovery_call"
 
 
-def nav_html(active):
+def nav_html(active, page):
+    """aria-current="page" belongs only on a link to THIS document. The section
+    that contains the current page gets its own weaker cue instead, because
+    claiming a link to another document is the current page is simply false."""
     out = []
     for key, label, href, children in NAV:
-        cur = ' aria-current="page"' if key == active else ""
+        here = href == page
+        cur = ' aria-current="page"' if here else ""
+        klass = "nav__link"
+        if key == active and not here:
+            klass += " nav__link--section"
         if not children:
             out.append(
-                f'      <div class="nav__item"><a class="nav__link" href="{href}"{cur}>{label}</a></div>'
+                f'      <div class="nav__item"><a class="{klass}" href="{href}"{cur}>{label}</a></div>'
             )
             continue
         items = []
@@ -88,12 +95,13 @@ def nav_html(active):
             elif text == "__rule":
                 items.append("          <hr>")
             else:
+                sub_cur = ' aria-current="page"' if (link == page and not here) else ""
                 dot = ' <span class="lead-dot" aria-hidden="true">&#9679;</span>' if lead else ""
-                items.append(f'          <a href="{link}">{text}{dot}</a>')
+                items.append(f'          <a href="{link}"{sub_cur}>{text}{dot}</a>')
         panel = "\n".join(items)
         out.append(
             f'      <div class="nav__item">\n'
-            f'        <a class="nav__link" href="{href}"{cur}>{label} <span class="caret" aria-hidden="true">&#9662;</span></a>\n'
+            f'        <a class="{klass}" href="{href}"{cur}>{label} <span class="caret" aria-hidden="true">&#9662;</span></a>\n'
             f'        <div class="nav__panel">\n{panel}\n        </div>\n'
             f'      </div>'
         )
@@ -183,28 +191,30 @@ def head(meta):
 """
 
 
-def masthead(active):
+def masthead(active, page):
+    home = ' aria-current="page"' if page == "index.html" else ""
+    contact = ' aria-current="page"' if page == "contact.html" else ""
     return f"""
-<div class="util">
-  <div class="wrap util__in">
-    <span>Portrait studio &middot; Cheltenham, Melbourne</span>
-    <span class="util__r">
-      <a href="{PHONE_HREF}">{PHONE}</a>
-      <a href="mailto:{EMAIL}">{EMAIL}</a>
-    </span>
-  </div>
-</div>
-
 <header class="mast">
+  <div class="util">
+    <div class="wrap util__in">
+      <span>Portrait studio &middot; Cheltenham, Melbourne</span>
+      <span class="util__r">
+        <a href="{PHONE_HREF}">{PHONE}</a>
+        <a href="mailto:{EMAIL}">{EMAIL}</a>
+      </span>
+    </div>
+  </div>
+
   <div class="wrap mast__in">
-    <a class="brand" href="index.html" aria-label="SEEN Portraits, home">
+    <a class="brand" href="index.html" aria-label="SEEN Portraits, home"{home}>
       <img class="brand__img" src="assets/img/SEEN-logo-horizontal-brown-crop.png" alt="" width="660" height="172">
     </a>
 
     <nav class="nav" aria-label="Main">
-{nav_html(active)}
+{nav_html(active, page)}
 
-      <a class="btn btn--sm" href="contact.html"><span>Contact</span></a>
+      <a class="btn btn--sm" href="contact.html"{contact}><span>Contact</span></a>
     </nav>
 
     <button class="burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Menu"><span></span></button>
@@ -212,7 +222,10 @@ def masthead(active):
 </header>
 
 <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
+  <button class="drawer__x" type="button" aria-label="Close menu"><span></span></button>
+  <nav aria-label="Main">
 {drawer_html()}
+  </nav>
   <div class="drawer__foot">
     <a class="btn" href="contact.html"><span>Contact</span></a>
     <a class="btn btn--ghost" href="{CALENDLY}" target="_blank" rel="noopener"><span>Book a discovery call</span></a>
@@ -333,7 +346,7 @@ def build_one(path):
 
     parts = [
         head(meta),
-        masthead(meta.get("nav", "")),
+        masthead(meta.get("nav", ""), meta["file"]),
         '\n<main id="main">\n',
         body.rstrip(),
         "\n\n</main>\n",

@@ -160,7 +160,10 @@
       if (y === lastY) return;
       mast.classList.toggle('is-stuck', y > 12);
       var down = y > prevY && y > 220;
-      if (!document.body.classList.contains('nav-open')) {
+      /* a retracted masthead is translated off screen but still focusable, so
+         keep it in place while it holds focus, per WCAG 2.2 SC 2.4.11 */
+      var holdsFocus = mast.contains(document.activeElement);
+      if (!document.body.classList.contains('nav-open') && !holdsFocus) {
         mast.classList.toggle('is-retracted', down);
       }
       prevY = y;
@@ -216,6 +219,7 @@
 
     function openDrawer() {
       document.body.classList.add('nav-open');
+      drawer.removeAttribute('inert');
       burger.setAttribute('aria-expanded', 'true');
       scrollLock = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
@@ -226,10 +230,13 @@
     function closeDrawer(returnFocus) {
       if (!document.body.classList.contains('nav-open')) return;
       document.body.classList.remove('nav-open');
+      drawer.setAttribute('inert', '');
       burger.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = scrollLock;
       if (returnFocus !== false) burger.focus();
     }
+
+    if (!document.body.classList.contains('nav-open')) drawer.setAttribute('inert', '');
 
     burger.addEventListener('click', function () {
       if (document.body.classList.contains('nav-open')) closeDrawer();
@@ -246,6 +253,7 @@
         head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         return;
       }
+      if (e.target.closest('.drawer__x')) { closeDrawer(); return; }
       if (e.target.closest('a')) closeDrawer(false);
     });
 
@@ -313,12 +321,6 @@
         if (img && !b.getAttribute('aria-label')) {
           b.setAttribute('aria-label', 'Enlarge image ' + (n + 1) + ', ' + (img.alt || 'portrait'));
         }
-        if (b.querySelector('.gal__n')) return;
-        var tag = document.createElement('span');
-        tag.className = 'gal__n';
-        tag.setAttribute('aria-hidden', 'true');
-        tag.textContent = String(n + 1).padStart(2, '0');
-        b.appendChild(tag);
       });
     });
   });
