@@ -49,9 +49,9 @@
 
   --wrap: 1360px;
   --gutter: clamp(20px, 5vw, 72px);
-  --band-y: clamp(68px, 9vw, 148px);
-  --band-xl: clamp(104px, 14vw, 224px);
-  --band-tight: clamp(30px, 4vw, 56px);
+  --band-y: clamp(54px, 6vw, 98px);
+  --band-xl: clamp(76px, 9vw, 140px);
+  --band-tight: clamp(26px, 3vw, 44px);
   --radius: 0;
   --radius-btn: 2px;
 
@@ -241,7 +241,7 @@ input, textarea, select { font: inherit; color: inherit; }
 }
 .band--flush-t { padding-top: 0; }
 .band--flush-b { padding-bottom: 0; }
-.band--slim { padding-block: clamp(40px, 5vw, 76px); }
+.band--slim { padding-block: clamp(34px, 4vw, 60px); }
 /* a band that introduces the one below it, rather than sitting apart from it */
 .band--lead-in { padding-block: var(--band-xl) var(--band-tight); }
 .band--follow { padding-top: var(--band-tight); }
@@ -255,7 +255,7 @@ input, textarea, select { font: inherit; color: inherit; }
   display: grid;
   grid-template-columns: 4.25rem 1fr;
   gap: clamp(14px, 2.5vw, 40px);
-  margin-bottom: clamp(30px, 4vw, 62px);
+  margin-bottom: clamp(22px, 2.6vw, 40px);
 }
 .shead__num {
   font-family: var(--f-mono);
@@ -644,7 +644,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 .hero--split {
   display: grid;
   grid-template-columns: 1.02fr .98fr;
-  min-height: min(86vh, 800px);
+  min-height: min(82vh, 720px);
   background: var(--bone);
   color: var(--ink);
 }
@@ -652,10 +652,10 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: clamp(52px, 7vw, 116px) clamp(24px, 5vw, 84px) clamp(52px, 7vw, 116px)
+  padding: clamp(44px, 5vw, 76px) clamp(24px, 4vw, 68px) clamp(44px, 5vw, 76px)
            max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
 }
-.hero--split .hero__plate { position: relative; min-height: 60vw; overflow: hidden; }
+.hero--split .hero__plate { position: relative; min-height: min(58vw, 700px); overflow: hidden; }
 .hero--split .hero__plate img {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -919,7 +919,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
    photography carry a page instead of leaving it all to type */
 .plate {
   position: relative;
-  min-height: min(64vh, 560px);
+  min-height: min(56vh, 470px);
   display: flex;
   align-items: center;
   background: var(--ink);
@@ -943,7 +943,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   z-index: 3;
   width: 100%;
   text-align: center;
-  padding-block: clamp(48px, 7vw, 96px);
+  padding-block: clamp(40px, 5vw, 76px);
 }
 .plate__line {
   font-family: var(--f-display);
