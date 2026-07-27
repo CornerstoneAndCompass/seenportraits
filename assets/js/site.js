@@ -150,6 +150,22 @@
      Masthead
      ------------------------------------------------------------------- */
 
+  /* The dock is fixed to the bottom and its labels are the client's own, so they
+     wrap on narrow phones. Reserve its real height rather than a guessed one,
+     or it covers the end of the page. */
+  guard('dock reserve', function () {
+    var dock = document.querySelector('.dock');
+    if (!dock) return;
+    var apply = function () {
+      var h = dock.offsetHeight;
+      if (h > 0) root.style.setProperty('--dock-h', h + 'px');
+      else root.style.removeProperty('--dock-h');
+    };
+    apply();
+    window.addEventListener('resize', apply, { passive: true });
+    if ('ResizeObserver' in window) new ResizeObserver(apply).observe(dock);
+  });
+
   guard('masthead', function () {
     var mast = document.querySelector('.mast');
     if (!mast) return;

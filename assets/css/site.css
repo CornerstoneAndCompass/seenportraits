@@ -41,6 +41,8 @@
   --fg-mute: var(--grey);
   --rule: #D2CCBE;
   --edge: #8A806C;
+  --dock-h: 78px;
+  --mast-h: 84px;
   --btn-edge: var(--stone-deep);
   --accent: var(--stone-deep);
   --field: #FFFFFF;
@@ -109,7 +111,8 @@ html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   /* clears the sticky masthead, including for the skip link */
-  scroll-padding-top: 96px;
+  scroll-padding-top: calc(var(--mast-h) + 12px);
+  scroll-padding-bottom: calc(var(--dock-h) + 12px);
 }
 
 body {
@@ -690,6 +693,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 }
 .dock a {
   flex: 1;
+  min-width: 0;
   text-align: center;
   padding: 15px 8px;
   background: var(--bone);
@@ -1539,9 +1543,29 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   .cols-4 { grid-template-columns: repeat(2, 1fr); }
   .steps--split .steps__i { grid-template-columns: 2.6rem 1fr; }
   .dock { display: flex; }
-  body { padding-bottom: 52px; }
+  body { padding-bottom: var(--dock-h); }
   .price { grid-template-columns: 1fr; }
   .capture { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 380px) {
+  .dock a { padding: 12px 6px; font-size: var(--label-sm); letter-spacing: .08em; }
+  :root { --dock-h: 72px; }
+}
+
+/* Without JS the burger cannot open the drawer, and .nav is hidden below
+   1024px, so the drawer becomes part of the page instead of a dialog. */
+@media (max-width: 1024px) {
+  .no-js .burger { display: none; }
+  .no-js .drawer {
+    position: static;
+    transform: none;
+    visibility: visible;
+    padding-top: 24px;
+    z-index: auto;
+  }
+  .no-js .drawer__x { display: none; }
+  .no-js .drawer__sub { display: block; }
 }
 
 @media (max-width: 720px) {
