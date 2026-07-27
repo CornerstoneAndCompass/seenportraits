@@ -223,6 +223,151 @@ input, textarea, select { font: inherit; color: inherit; }
 .stars { color: var(--accent); letter-spacing: .18em; font-size: .8rem; }
 .band--ink .stars { color: var(--stone); }
 
+/* The emphasised phrase. Their brand face throughout, so the emphasis is
+   carried by the gold and by a drawn underline that sweeps in on reveal. */
+.em {
+  color: var(--accent);
+  position: relative;
+  white-space: nowrap;
+}
+.em::after {
+  content: "";
+  position: absolute;
+  left: -.04em;
+  right: -.04em;
+  bottom: .01em;
+  height: .15em;
+  background: no-repeat center/100% 100%
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 18' preserveAspectRatio='none'%3E%3Cpath d='M2 12.6c46-5.2 96-8.4 148-8.9 47-.4 96 1.7 148 6.2' fill='none' stroke='%23A69177' stroke-width='3.2' stroke-linecap='round'/%3E%3Cpath d='M14 16.4c52-3.4 104-5 156-4.6' fill='none' stroke='%23A69177' stroke-width='1.6' stroke-linecap='round' opacity='.55'/%3E%3C/svg%3E");
+  transform-origin: left center;
+  pointer-events: none;
+}
+/* Nothing is hidden unless JS has confirmed it can put it back */
+.js-anim .em::after {
+  transform: scaleX(0);
+  transition: transform .82s var(--ease-out) .35s;
+}
+.js-anim .is-in .em::after { transform: scaleX(1); }
+/* word split adds descender padding below the baseline, so drop the stroke in */
+.reveal-w .em::after { bottom: .19em; }
+@media (prefers-reduced-motion: reduce) {
+  .js-anim .em::after { transform: scaleX(1); transition: none; }
+}
+
+/* Social proof, immediately under the hero where it answers the first doubt */
+.proof {
+  background: var(--ink);
+  color: var(--bone);
+  border-top: 1px solid rgba(246, 245, 243, .12);
+}
+.proof__in {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 3vw, 46px);
+  padding-block: clamp(16px, 2vw, 26px);
+  text-align: center;
+}
+.proof__i {
+  display: flex;
+  align-items: center;
+  gap: .6em;
+  font-size: var(--label);
+  letter-spacing: var(--label-ls);
+  text-transform: uppercase;
+  color: #B8B2A6;
+}
+.proof__i b { color: var(--bone); font-weight: 400; font-size: 1.15em; }
+.proof__i .stars { color: var(--stone); }
+.proof__sep { width: 1px; height: 22px; background: rgba(246, 245, 243, .16); }
+@media (max-width: 720px) { .proof__sep { display: none; } }
+
+/* One quote at scale, with a real portrait, instead of two small cards */
+.bigquote {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) min(38%, 420px);
+  gap: clamp(26px, 5vw, 76px);
+  align-items: center;
+}
+.bigquote blockquote {
+  font-family: var(--f-display);
+  font-size: clamp(1.3rem, 2.1vw, 1.85rem);
+  line-height: 1.3;
+  letter-spacing: -.016em;
+}
+.bigquote .ph { aspect-ratio: 4 / 5; }
+.bigquote__more {
+  max-width: 58ch;
+  margin-left: auto;
+  margin-top: clamp(30px, 4vw, 58px);
+}
+
+.bigquote__by {
+  margin-top: clamp(18px, 2.4vw, 30px);
+  font-size: var(--label);
+  letter-spacing: var(--label-ls);
+  text-transform: uppercase;
+  color: var(--fg-mute);
+}
+@media (max-width: 860px) {
+  .bigquote { grid-template-columns: 1fr; }
+  .bigquote .ph { max-height: 60vw; }
+}
+
+/* Pricing as one large figure against a portrait */
+.priceplate {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) min(42%, 520px);
+  gap: clamp(26px, 5vw, 72px);
+  align-items: stretch;
+}
+.priceplate .ph {
+  aspect-ratio: auto;
+  height: 100%;
+  min-height: clamp(360px, 36vw, 560px);
+}
+.priceplate__copy { align-self: start; }
+@media (max-width: 860px) {
+  .priceplate { grid-template-columns: 1fr; }
+  .priceplate .ph { aspect-ratio: 4 / 5; height: auto; min-height: 0; }
+}
+
+/* FAQ with the heading held beside the questions rather than stacked above */
+.faqsplit {
+  display: grid;
+  grid-template-columns: minmax(0, .74fr) minmax(0, 1.26fr);
+  gap: clamp(24px, 5vw, 80px);
+  align-items: start;
+}
+.faqsplit__head { position: sticky; top: 120px; }
+.btn-row--stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(12px, 1.6vw, 18px);
+  margin-top: clamp(24px, 3vw, 38px);
+}
+@media (max-width: 900px) {
+  .faqsplit { grid-template-columns: 1fr; }
+  .faqsplit__head { position: static; }
+}
+
+/* Deliverables with one dominant piece rather than three equal tiles */
+.deliv--lead { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.deliv--lead > *:first-child { grid-column: 1 / -1; }
+.deliv--lead > *:first-child .ph { aspect-ratio: 21 / 9; }
+.deliv--lead > *:first-child .deliv__d { max-width: 58ch; }
+@media (max-width: 720px) {
+  .deliv--lead { grid-template-columns: 1fr; }
+  .deliv--lead > *:first-child .ph { aspect-ratio: 3 / 2; }
+}
+
+.invite__body {
+  margin-top: clamp(28px, 4vw, 54px);
+  margin-left: clamp(0px, 9vw, 210px);
+}
+
 /* 04  Layout ------------------------------------------------------------ */
 
 .wrap {
@@ -976,8 +1121,8 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 
 /* editorial statement */
 .statement {
-  max-width: 34ch;
-  margin-left: clamp(0px, 8vw, 190px);
+  max-width: 38ch;
+  margin-left: 0;
   font-family: var(--f-display);
   font-size: clamp(1.55rem, 3.4vw, 2.9rem);
   line-height: 1.16;

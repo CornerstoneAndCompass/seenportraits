@@ -34,32 +34,45 @@
 
   function splittable(el) {
     return Array.prototype.every.call(el.childNodes, function (n) {
-      return n.nodeType === 3 || n.tagName === 'BR';
+      return n.nodeType === 3 || n.tagName === 'BR' || n.tagName === 'SPAN';
     });
   }
 
   function splitWords(el) {
     if (el.dataset.split) return;
-    var out = [];
     var i = 0;
-    Array.prototype.forEach.call(el.childNodes, function (node) {
-      if (node.nodeType === 3) {
-        node.textContent.split(/(\s+)/).forEach(function (chunk) {
-          if (!chunk.trim()) { out.push(document.createTextNode(chunk)); return; }
-          var outer = document.createElement('span');
-          outer.className = 'w';
-          var inner = document.createElement('span');
-          inner.className = 'w__i';
-          inner.textContent = chunk;
-          inner.style.transitionDelay = (i * 0.055).toFixed(3) + 's';
-          i++;
-          outer.appendChild(inner);
-          out.push(outer);
-        });
-      } else {
-        out.push(node.cloneNode(true));
-      }
-    });
+
+    /* Recurse so an inline emphasis wrapper survives the split and the words
+       inside it still animate in sequence with the rest of the headline. */
+    function collect(node, sink) {
+      Array.prototype.forEach.call(node.childNodes, function (n) {
+        if (n.nodeType === 3) {
+          n.textContent.split(/(\s+)/).forEach(function (chunk) {
+            if (!chunk.trim()) { sink.push(document.createTextNode(chunk)); return; }
+            var outer = document.createElement('span');
+            outer.className = 'w';
+            var inner = document.createElement('span');
+            inner.className = 'w__i';
+            inner.textContent = chunk;
+            inner.style.transitionDelay = (i * 0.055).toFixed(3) + 's';
+            i++;
+            outer.appendChild(inner);
+            sink.push(outer);
+          });
+        } else if (n.tagName === 'SPAN') {
+          var shell = n.cloneNode(false);
+          var kids = [];
+          collect(n, kids);
+          kids.forEach(function (k) { shell.appendChild(k); });
+          sink.push(shell);
+        } else {
+          sink.push(n.cloneNode(true));
+        }
+      });
+    }
+
+    var out = [];
+    collect(el, out);
     el.innerHTML = '';
     out.forEach(function (n) { el.appendChild(n); });
     el.dataset.split = '1';
