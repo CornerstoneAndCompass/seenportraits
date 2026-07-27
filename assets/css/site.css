@@ -298,11 +298,11 @@ input, textarea, select { font: inherit; color: inherit; }
   align-items: stretch;
 }
 .priceplate .ph {
-  aspect-ratio: auto;
-  height: 100%;
-  min-height: clamp(360px, 36vw, 560px);
+  aspect-ratio: 4 / 5;
+  height: auto;
+  max-height: min(66vh, 560px);
 }
-.priceplate__copy { align-self: start; }
+.priceplate__copy { align-self: center; }
 @media (max-width: 860px) {
   .priceplate { grid-template-columns: 1fr; }
   .priceplate .ph { aspect-ratio: 4 / 5; height: auto; min-height: 0; }
@@ -791,8 +791,18 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   gap: clamp(18px, 3vw, 56px);
   align-items: center;
 }
-.heroline .lead { color: var(--fg); }
-.heroline .hero__meta { margin-top: clamp(18px, 2.2vw, 28px); gap: 10px 22px; }
+.heroline .lead { color: var(--fg); max-width: 34em; }
+.heroline .hero__meta > * + *::before {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  margin-right: 22px;
+  background: var(--rule);
+  vertical-align: -.15em;
+}
+.heroline .hero__meta > * + * { margin-left: 0; }
+.heroline .hero__meta { margin-top: clamp(14px, 1.4vw, 20px); gap: 10px 22px; }
 .hero--plate .hero__copy {
   position: relative;
   z-index: 3;
@@ -1027,13 +1037,14 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 
 /* editorial statement */
 .statement {
-  max-width: 14em;
+  max-width: 20em;
   font-family: var(--f-display);
   font-size: clamp(1.55rem, 3.4vw, 2.9rem);
   line-height: 1.16;
   letter-spacing: -.018em;
 }
-.statement--wide { max-width: 16em; font-size: clamp(1.3rem, 2.3vw, 2.05rem); line-height: 1.28; }
+.statement + .prose { margin-top: clamp(26px, 3.4vw, 48px); }
+.statement--wide { max-width: 23em; font-size: clamp(1.3rem, 2.3vw, 2.05rem); line-height: 1.28; }
 
 /* numbered process list */
 .steps { border-top: 1px solid var(--rule); }
@@ -1145,6 +1156,16 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   padding: clamp(6px, 1vw, 14px);
 }
 .embed iframe { width: 100%; border: 0; display: block; min-height: 620px; }
+/* The GoHighLevel embed script hides the iframe on load and only reveals it
+   when the form posts back. That message never arrives off their own domain,
+   so the enquiry form stayed invisible. These win over its inline styles. */
+.embed iframe[data-initial-iframe-hidden] {
+  position: static !important;
+  left: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
 .embed--tall iframe { min-height: 1100px; }
 
 /* closing call to action */
