@@ -63,6 +63,8 @@ NAV = [
     ("blog", "Blog", "blog.html", []),
 ]
 
+SITE = "https://seenportraits.com.au"
+
 PHONE = "+61 (041) 2000 179"
 PHONE_HREF = "tel:+61412000179"
 EMAIL = "studio@seenportraits.com.au"
@@ -124,7 +126,10 @@ def drawer_html():
 def head(meta):
     title = meta["title"]
     desc = meta["description"]
-    canonical = meta.get("slug", "")
+    # canonicals point at the artefact that actually exists, so they cannot
+    # 404 if the host is not rewriting extensionless URLs
+    canonical = SITE + "/" + meta["file"]
+    share = meta.get("share", "assets/img/luxurious-boudoir-portraits-melbourne.jpg")
     css = asset("assets/css/site.css")
     return f"""<!DOCTYPE html>
 <html lang="en-AU" class="no-js">
@@ -133,15 +138,44 @@ def head(meta):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="canonical" href="https://seenportraits.com.au/{canonical}">
+<link rel="canonical" href="{canonical}">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:type" content="website">
+<meta property="og:url" content="{canonical}">
+<meta property="og:image" content="{SITE}/{share}">
+<meta property="og:site_name" content="SEEN Portraits">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/img/SEEN-favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://link.seenportraits.com.au">
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{css}">
+<script type="application/ld+json">{{
+ "@context": "https://schema.org",
+ "@type": "PhotographyBusiness",
+ "name": "SEEN Portraits",
+ "url": "{SITE}/",
+ "image": "{SITE}/assets/img/SEEN-logo-horizontal-brown-crop.png",
+ "telephone": "+61412000179",
+ "email": "studio@seenportraits.com.au",
+ "priceRange": "$$$",
+ "address": {{
+  "@type": "PostalAddress",
+  "streetAddress": "35 Belrose Avenue",
+  "addressLocality": "Cheltenham",
+  "addressRegion": "VIC",
+  "postalCode": "3192",
+  "addressCountry": "AU"
+ }},
+ "geo": {{ "@type": "GeoCoordinates", "latitude": -37.96087, "longitude": 145.03832 }},
+ "aggregateRating": {{ "@type": "AggregateRating", "ratingValue": "5.0", "reviewCount": "81" }},
+ "openingHoursSpecification": [
+  {{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "17:00" }},
+  {{ "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "09:00", "closes": "13:00" }}
+ ]
+}}</script>
 </head>
 <body>
 
@@ -178,7 +212,7 @@ def masthead(active):
   </div>
 </header>
 
-<div class="drawer" id="drawer">
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
 {drawer_html()}
   <div class="drawer__foot">
     <a class="btn" href="contact.html"><span>Contact</span></a>
@@ -211,7 +245,7 @@ def footer():
       </div>
 
       <div>
-        <h4>Sessions</h4>
+        <h2>Sessions</h2>
         <ul>
           <li><a href="boudoir.html">Boudoir</a></li>
           <li><a href="personal-branding.html">Personal Branding</a></li>
@@ -222,7 +256,7 @@ def footer():
       </div>
 
       <div>
-        <h4>Studio</h4>
+        <h2>Studio</h2>
         <ul>
           <li><a href="about.html">About SEEN</a></li>
           <li><a href="studio.html">The studio</a></li>
@@ -233,7 +267,7 @@ def footer():
       </div>
 
       <div>
-        <h4>Ready when you are</h4>
+        <h2>Ready when you are</h2>
         <div class="foot__rate">
           <span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> 5.0 on Google
         </div>
@@ -276,7 +310,7 @@ LIGHTBOX = """
   <img alt="">
   <button class="lbox__nav lbox__next" type="button" aria-label="Next">&#8250;</button>
   <div class="lbox__cap"></div>
-  <div class="lbox__count"></div>
+  <div class="lbox__count" aria-live="polite"></div>
 </div>
 """
 
@@ -284,7 +318,7 @@ LIGHTBOX = """
 def scripts(meta):
     out = []
     if meta.get("form"):
-        out.append('<script src="https://link.seenportraits.com.au/js/form_embed.js"></script>')
+        out.append('<script defer src="https://link.seenportraits.com.au/js/form_embed.js"></script>')
     out.append('<script src="%s"></script>' % asset("assets/js/site.js"))
     return "\n".join(out)
 
@@ -295,7 +329,7 @@ def build_one(path):
     if not m:
         raise SystemExit(f"{path.name}: missing <!--meta {{...}} --> header")
     meta = json.loads(m.group(1))
-    meta.setdefault("slug", "" if path.stem == "index" else path.stem + "/")
+    meta["file"] = path.stem + ".html"
     body = raw[m.end():]
 
     parts = [

@@ -111,7 +111,7 @@ def rewrite_links(body):
     return body
 
 def excerpt(p):
-    text = p.get("summary") or re.sub(r"<[^>]+>", " ", p["body"])
+    text = html.unescape(p.get("summary") or re.sub(r"<[^>]+>", " ", p["body"]))
     text = re.sub(r"\s+", " ", text).strip()
     # WordPress meta descriptions carry "Read more" arrows and stray ellipses
     text = re.sub(r"\s*(->|&rarr;|→|&hellip;|…|\.{3,})\s*$", "", text).strip()
@@ -251,7 +251,7 @@ for idx, p in enumerate(posts):
         </div>
       </a>''' for i, q in enumerate(related))
 
-    desc = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", p["body"]))[:155].strip()
+    desc = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", p["body"])))[:155].strip()
     page = [meta(html.escape(p["title"]) + " | SEEN Portraits",
                  html.escape(desc), "blog/" + p["slug"] + "/")]
 
@@ -299,7 +299,7 @@ for idx, p in enumerate(posts):
      ===================================================================== -->
 <section class="band band--slim">
   <div class="wrap">
-    <div class="capture" style="grid-template-columns:1fr auto;align-items:center" data-rise>
+    <div class="capture capture--split" data-rise>
       <div class="stack-s">
         <p class="kicker">Mentioned in this story</p>
         <p class="d4">{label}</p>
