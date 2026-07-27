@@ -74,7 +74,7 @@
     });
 
     /* Tier 2, full-bleed and feature photography wipes open. */
-    document.querySelectorAll('.split__media > .ph, .hero__plate, .mapframe, .capture > .ph')
+    document.querySelectorAll('.split__media > .ph, .mapframe, .capture > .ph')
       .forEach(function (el) { el.setAttribute('data-media', ''); });
 
     /* Tier 3, grid tiles settle quietly, staggered by index. */
@@ -89,15 +89,20 @@
   });
 
   /* ----------------------------------------------------------------------
-     Reveal on scroll, attached before .no-js is cleared
+     Reveal on scroll
+
+     Nothing is hidden until html.js-anim is set, and that only happens once
+     the observer is about to run in a visible tab. If any of this fails, or
+     the tab is in the background, the page simply renders complete. Content
+     is never conditional on an animation.
      ------------------------------------------------------------------- */
 
-  guard('reveal', function () {
+  function startReveals() {
     var watched = document.querySelectorAll('[data-rise], [data-media], [data-tile], .reveal-w, .hr');
-    if (!watched.length || reduce || !('IntersectionObserver' in window)) {
-      revealAll();
-      return;
-    }
+    if (!watched.length || reduce || !('IntersectionObserver' in window)) return;
+
+    root.classList.add('js-anim');
+
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -105,33 +110,28 @@
           io.unobserve(entry.target);
         }
       });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
     for (var i = 0; i < watched.length; i++) io.observe(watched[i]);
-  });
 
-  /* Safety net, not a shortcut. It only fires if the observer never reported
-     anything, so scroll reveals further down the page survive. It also waits
-     for the tab to be visible: Chrome freezes animation timelines and delays
-     observers in background tabs, and firing here would spend every reveal
-     before the visitor ever looked at the page. */
-  root.classList.remove('no-js');
-
-  function safetyNet() {
+    /* if the observer somehow reports nothing, show everything */
     window.setTimeout(function () {
       if (!document.querySelector('.is-in')) revealAll();
     }, 2500);
   }
 
-  if (document.visibilityState === 'hidden') {
-    document.addEventListener('visibilitychange', function onShow() {
-      if (document.visibilityState !== 'hidden') {
+  root.classList.remove('no-js');
+
+  guard('reveal', function () {
+    if (document.visibilityState === 'hidden') {
+      document.addEventListener('visibilitychange', function onShow() {
+        if (document.visibilityState === 'hidden') return;
         document.removeEventListener('visibilitychange', onShow);
-        safetyNet();
-      }
-    });
-  } else {
-    safetyNet();
-  }
+        startReveals();
+      });
+    } else {
+      startReveals();
+    }
+  });
 
   /* ----------------------------------------------------------------------
      Masthead
@@ -148,7 +148,7 @@
       mast.classList.toggle('is-stuck', y > 12);
       var down = y > prevY && y > 220;
       if (!document.body.classList.contains('nav-open')) {
-        mast.classList.toggle('is-hidden', down);
+        mast.classList.toggle('is-retracted', down);
       }
       prevY = y;
       lastY = y;
