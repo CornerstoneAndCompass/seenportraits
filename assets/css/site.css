@@ -53,7 +53,7 @@
   --f-sans: var(--f-display);
   --f-mono: var(--f-display);
 
-  --wrap: 1360px;
+  --wrap: 1600px;
   --gutter: clamp(20px, 5vw, 72px);
   --band-y: clamp(54px, 6vw, 98px);
   --band-xl: clamp(76px, 9vw, 140px);

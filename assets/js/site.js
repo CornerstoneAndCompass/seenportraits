@@ -87,12 +87,30 @@
     });
 
     /* Tier 2, full-bleed and feature photography wipes open. */
+    /* One gate per element. A .ph inside a [data-rise] wrapper would otherwise
+       carry both an opacity fade on the wrapper and a clip-path wipe on itself,
+       needing two observer callbacks to appear. A single miss on the clip gate
+       hides the photograph outright, permanently. */
     document.querySelectorAll('.split__media > .ph, .mapframe, .capture > .ph')
-      .forEach(function (el) { el.setAttribute('data-media', ''); });
+      .forEach(function (el) {
+        if (el.closest('[data-rise]')) return;
+        el.setAttribute('data-media', '');
+      });
 
     /* Tier 3, grid tiles settle quietly, staggered by index. */
     document.querySelectorAll('.gal, .cols, .deliv').forEach(function (grid) {
       var tiles = grid.children;
+      if (!tiles.length) return;
+      /* The grid and its tiles must never both gate. If the grid itself carries
+         the gate, hand it to the tiles so they keep their stagger. If the gate
+         is on some outer wrapper, leave the tiles ungated rather than stack a
+         second one on them. */
+      if (grid.hasAttribute('data-rise')) {
+        grid.removeAttribute('data-rise');
+        grid.removeAttribute('data-d');
+      } else if (grid.closest('[data-rise]')) {
+        return;
+      }
       for (var t = 0; t < tiles.length; t++) {
         if (tiles[t].hasAttribute('data-media')) continue;
         tiles[t].setAttribute('data-tile', '');
@@ -126,9 +144,15 @@
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
     for (var i = 0; i < watched.length; i++) io.observe(watched[i]);
 
-    /* if the observer somehow reports nothing, show everything */
+    /* If the observer reports nothing at all, show everything. And if it
+       reported some things but left others gated inside a wrapper that has
+       already revealed, release those too: a missed callback on a clip-path
+       gate hides a photograph outright. */
     window.setTimeout(function () {
-      if (!document.querySelector('.is-in')) revealAll();
+      if (!document.querySelector('.is-in')) { revealAll(); return; }
+      var stuck = document.querySelectorAll(
+        '.is-in [data-rise]:not(.is-in), .is-in [data-media]:not(.is-in), .is-in [data-tile]:not(.is-in)');
+      for (var k = 0; k < stuck.length; k++) stuck[k].classList.add('is-in');
     }, 2500);
   }
 
