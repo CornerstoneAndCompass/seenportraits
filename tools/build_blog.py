@@ -143,11 +143,8 @@ out.append(f'''<!-- FEATURED STORY =============================================
       <span>Blog</span>
     </p>
     <div class="shead" data-rise>
-      <div class="shead__num">01</div>
-      <div class="shead__body">
         <p class="kicker">Behind the scenes</p>
         <h1 class="d2">Melbourne&rsquo;s latest photo shoots, studio events and client stories</h1>
-      </div>
     </div>
 
     <a class="split split--wide-r" href="blog-{feat['slug']}.html" data-rise style="align-items:center">
@@ -166,11 +163,8 @@ out.append(f'''<!-- FEATURED STORY =============================================
 <section class="band">
   <div class="wrap">
     <div class="shead" data-rise>
-      <div class="shead__num">02</div>
-      <div class="shead__body">
         <p class="kicker">Recent</p>
         <h2 class="d2">Keep reading</h2>
-      </div>
     </div>
 
     <div class="cols cols-3">''')
@@ -193,11 +187,8 @@ out.append('''    </div>
 <section class="band band--bone2">
   <div class="wrap">
     <div class="shead" data-rise>
-      <div class="shead__num">03</div>
-      <div class="shead__body">
         <p class="kicker kicker--mute">The archive</p>
         <h2 class="d2">Everything else</h2>
-      </div>
     </div>
 
     <div class="post-row" data-rise>''')
@@ -319,11 +310,8 @@ for idx, p in enumerate(posts):
 <section class="band band--bone2">
   <div class="wrap">
     <div class="shead" data-rise>
-      <div class="shead__num">04</div>
-      <div class="shead__body">
         <p class="kicker kicker--mute">Keep reading</p>
         <h2 class="d2">More from the studio</h2>
-      </div>
     </div>
     <div class="cols cols-3">
 {rel}

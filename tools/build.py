@@ -348,16 +348,6 @@ def build_one(path):
 
     page = "".join(parts)
 
-    # Section numerals are sequential per page. Authors do not maintain them,
-    # because removing or adding a section used to leave gaps and repeats.
-    n = [0]
-
-    def renumber(m):
-        n[0] += 1
-        return '%s%02d%s' % (m.group(1), n[0], m.group(3))
-
-    page = re.sub(r'(<div class="shead__num">)\s*([0-9]{2}|&mdash;|—)\s*(</div>)',
-                  renumber, page)
     # house style: no em dashes anywhere, including in imported blog copy
     for dash in ("—", "&mdash;", "&#8212;", "&#x2014;", "&#X2014;"):
         page = page.replace(dash, ", ")
