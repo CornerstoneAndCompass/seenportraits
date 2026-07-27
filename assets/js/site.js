@@ -109,12 +109,29 @@
     for (var i = 0; i < watched.length; i++) io.observe(watched[i]);
   });
 
-  /* Safety net, not a shortcut: this only fires if the observer never
-     reported anything, so scroll reveals further down the page survive. */
+  /* Safety net, not a shortcut. It only fires if the observer never reported
+     anything, so scroll reveals further down the page survive. It also waits
+     for the tab to be visible: Chrome freezes animation timelines and delays
+     observers in background tabs, and firing here would spend every reveal
+     before the visitor ever looked at the page. */
   root.classList.remove('no-js');
-  window.setTimeout(function () {
-    if (!document.querySelector('.is-in')) revealAll();
-  }, 2500);
+
+  function safetyNet() {
+    window.setTimeout(function () {
+      if (!document.querySelector('.is-in')) revealAll();
+    }, 2500);
+  }
+
+  if (document.visibilityState === 'hidden') {
+    document.addEventListener('visibilitychange', function onShow() {
+      if (document.visibilityState !== 'hidden') {
+        document.removeEventListener('visibilitychange', onShow);
+        safetyNet();
+      }
+    });
+  } else {
+    safetyNet();
+  }
 
   /* ----------------------------------------------------------------------
      Masthead
