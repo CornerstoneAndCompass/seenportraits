@@ -109,9 +109,12 @@
     for (var i = 0; i < watched.length; i++) io.observe(watched[i]);
   });
 
-  /* Whatever happened above, the page must never stay blank. */
+  /* Safety net, not a shortcut: this only fires if the observer never
+     reported anything, so scroll reveals further down the page survive. */
   root.classList.remove('no-js');
-  window.setTimeout(revealAll, 2500);
+  window.setTimeout(function () {
+    if (!document.querySelector('.is-in')) revealAll();
+  }, 2500);
 
   /* ----------------------------------------------------------------------
      Masthead
