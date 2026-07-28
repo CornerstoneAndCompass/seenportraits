@@ -1346,10 +1346,12 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   font-size: 1.08rem;
   line-height: 1.7;
 }
-/* The band hugs the reading column, so a long-form page has no stranded space
-   beside the text and the column keeps a sane measure. Figures can still break
-   out to the full band width. */
-.band--read > .wrap { max-width: calc(34em * 1.08 + var(--gutter) * 2); }
+
+/* A post's title block is not a reading column. It keeps the page's full width
+   and only the headline carries a measure, so it sets in two or three lines
+   rather than four in a narrow strip. */
+.posthead { max-width: 46rem; }
+.posthead .d2 { max-width: 24em; }
 .article p { margin-bottom: 1.35em; color: var(--fg-mute); }
 .article h2 {
   font-family: var(--f-display);
