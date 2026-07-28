@@ -191,7 +191,7 @@ input, textarea, select { font: inherit; color: inherit; }
 .d2 { font-size: clamp(1.95rem, 4vw, 3.5rem); line-height: 1.03; }
 .d3 { font-size: clamp(1.4rem, 2.3vw, 2.1rem); line-height: 1.12; letter-spacing: -.012em; }
 .d4 { font-size: clamp(1.15rem, 1.5vw, 1.4rem); line-height: 1.22; letter-spacing: -.008em; }
-/* the tier that was missing between a heading and body copy */
+/* the tier between a heading and body copy */
 .d-pull { font-family: var(--f-display); font-weight: 400; font-size: clamp(1.6rem, 2.9vw, 2.5rem); line-height: 1.26; letter-spacing: -.014em; }
 .d-fig  { font-family: var(--f-display); font-size: clamp(3.6rem, 8vw, 7rem); line-height: .88; letter-spacing: -.03em; }
 
@@ -266,7 +266,7 @@ input, textarea, select { font: inherit; color: inherit; }
   .js-anim .em::after { transform: scaleX(1); transition: none; }
 }
 
-/* One quote at scale, with a real portrait, instead of two small cards */
+/* one quote at scale, beside a portrait */
 .bigquote {
   display: grid;
   grid-template-columns: minmax(0, 1fr) min(38%, 420px);
@@ -765,9 +765,8 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 .ph-16x9 { aspect-ratio: 16 / 9; }
 .ph-tall { aspect-ratio: 2 / 3; }
 
-/* A caption sits on a photograph, so it cannot rely on the section's colours.
-   A text shadow is not a backing: over a bright wall the label disappeared.
-   This plate composites to at least 9:1 even over pure white. */
+/* Captions sit on photographs, so they carry their own plate rather than the
+   section's colours. It composites to at least 9:1 over pure white. */
 .ph__cap {
   position: absolute;
   left: 10px; bottom: 10px;
@@ -851,7 +850,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 }
 .pretitle .crumb { padding-block: 15px; }
 
-/* the line and facts that used to sit on the hero */
+/* the promise line and the reassurance row under the hero */
 .heroline { border-bottom: 1px solid var(--rule); }
 .heroline__in {
   display: grid;
@@ -1224,9 +1223,8 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   padding: clamp(6px, 1vw, 14px);
 }
 .embed iframe { width: 100%; border: 0; display: block; min-height: 620px; }
-/* The GoHighLevel embed script hides the iframe on load and only reveals it
-   when the form posts back. That message never arrives off their own domain,
-   so the enquiry form stayed invisible. These win over its inline styles. */
+/* The embed script hides the iframe until the form posts back, which does not
+   happen off its own domain. These override its inline styles. */
 .embed iframe[data-initial-iframe-hidden] {
   position: static !important;
   left: auto !important;
@@ -1301,7 +1299,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 .opt[aria-pressed="true"] .opt__t { color: var(--accent); }
 .opt__t { font-family: var(--f-display); font-size: 1.2rem; margin-bottom: .35rem; }
 .opt__d { color: var(--fg-mute); font-size: .95rem; }
-/* .opt is a full width card, so the amount chips need their own footprint */
+/* .opt is a full width card; the amount chips size to their content */
 .opt--chip {
   width: auto;
   flex: 0 0 auto;
@@ -1338,8 +1336,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 .post-item:hover .post-item__t { color: var(--accent); }
 .post-item__go { font-family: var(--f-mono); font-size: var(--label-sm); letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--fg-mute); }
 
-/* Long-form reading: body copy was 14.72px running 100 characters a line.
-   Raised for reading, and the measure is set in em so it tracks the size. */
+/* Long-form reading. The measure is set in em so it tracks the type size. */
 .article {
   max-width: 34em;
   margin-inline: 0;
@@ -1347,9 +1344,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   line-height: 1.7;
 }
 
-/* A post's title block is not a reading column. It keeps the page's full width
-   and only the headline carries a measure, so it sets in two or three lines
-   rather than four in a narrow strip. */
+/* A post's title block keeps the page width; only the headline is measured. */
 .posthead { max-width: 46rem; }
 .posthead .d2 { max-width: 24em; }
 .article p { margin-bottom: 1.35em; color: var(--fg-mute); }
@@ -1452,7 +1447,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 }
 .foot ul li + li { margin-top: .6rem; }
 .foot a { color: #A5A099; }
-/* .foot a outranks .btn, so restore the button's own label colour */
+/* .foot a outranks .btn, so the button keeps its own label colour */
 .foot .btn { color: var(--btn-fg); }
 .foot a:hover { color: var(--bone); }
 .foot__brand p { color: #A5A099; font-size: .96rem; margin-top: 1.1rem; max-width: 32ch; }
@@ -1579,7 +1574,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 @media (max-width: 1180px) {
   .foot__grid { grid-template-columns: 1fr 1fr; }
   .gal { grid-template-columns: repeat(3, 1fr); }
-  /* the meta row outgrows its column well before the 1024 breakpoint */
+  /* the meta row needs its own column before the 1024 breakpoint */
 }
 
 @media (max-width: 1024px) {
@@ -1612,8 +1607,8 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   :root { --dock-h: 72px; }
 }
 
-/* Without JS the burger cannot open the drawer, and .nav is hidden below
-   1024px, so the drawer becomes part of the page instead of a dialog. */
+/* Without JS the drawer is part of the page rather than a dialog, since the
+   burger cannot open it and .nav is hidden below 1024px. */
 @media (max-width: 1024px) {
   .no-js .burger { display: none; }
   .no-js .drawer {

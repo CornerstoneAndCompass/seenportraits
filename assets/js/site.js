@@ -87,10 +87,7 @@
     });
 
     /* Tier 2, full-bleed and feature photography wipes open. */
-    /* One gate per element. A .ph inside a [data-rise] wrapper would otherwise
-       carry both an opacity fade on the wrapper and a clip-path wipe on itself,
-       needing two observer callbacks to appear. A single miss on the clip gate
-       hides the photograph outright, permanently. */
+    /* One gate per element, so a frame never needs two callbacks to appear. */
     document.querySelectorAll('.split__media > .ph, .mapframe, .capture > .ph')
       .forEach(function (el) {
         if (el.closest('[data-rise]')) return;
@@ -101,10 +98,8 @@
     document.querySelectorAll('.gal, .cols, .deliv').forEach(function (grid) {
       var tiles = grid.children;
       if (!tiles.length) return;
-      /* The grid and its tiles must never both gate. If the grid itself carries
-         the gate, hand it to the tiles so they keep their stagger. If the gate
-         is on some outer wrapper, leave the tiles ungated rather than stack a
-         second one on them. */
+      /* A grid and its tiles never both gate. The grid hands its gate to the
+         tiles so they keep their stagger; an outer gate leaves them ungated. */
       if (grid.hasAttribute('data-rise')) {
         grid.removeAttribute('data-rise');
         grid.removeAttribute('data-d');
@@ -144,10 +139,8 @@
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
     for (var i = 0; i < watched.length; i++) io.observe(watched[i]);
 
-    /* If the observer reports nothing at all, show everything. And if it
-       reported some things but left others gated inside a wrapper that has
-       already revealed, release those too: a missed callback on a clip-path
-       gate hides a photograph outright. */
+    /* Show everything if the observer reports nothing, and release anything
+       still gated inside a wrapper that has already revealed. */
     window.setTimeout(function () {
       if (!document.querySelector('.is-in')) { revealAll(); return; }
       var stuck = document.querySelectorAll(
@@ -174,9 +167,7 @@
      Masthead
      ------------------------------------------------------------------- */
 
-  /* The dock is fixed to the bottom and its labels are the client's own, so they
-     wrap on narrow phones. Reserve its real height rather than a guessed one,
-     or it covers the end of the page. */
+  /* The dock labels wrap on narrow phones, so reserve its measured height. */
   guard('dock reserve', function () {
     var dock = document.querySelector('.dock');
     if (!dock) return;
@@ -200,8 +191,7 @@
       if (y === lastY) return;
       mast.classList.toggle('is-stuck', y > 12);
       var down = y > prevY && y > 220;
-      /* a retracted masthead is translated off screen but still focusable, so
-         keep it in place while it holds focus, per WCAG 2.2 SC 2.4.11 */
+      /* keep the masthead in place while it holds focus, WCAG 2.2 SC 2.4.11 */
       var holdsFocus = mast.contains(document.activeElement);
       if (!document.body.classList.contains('nav-open') && !holdsFocus) {
         mast.classList.toggle('is-retracted', down);
@@ -481,8 +471,7 @@
 
     var state = { kind: null, session: null, amount: null };
 
-    /* Number the steps that are actually on screen, so hiding a branch never
-       leaves the visitor looking at Step 1 followed by Step 3. */
+    /* Number only the steps on screen, so a hidden branch leaves no gap. */
     function renumber() {
       var i = 0;
       vform.querySelectorAll('.vstep').forEach(function (step) {
