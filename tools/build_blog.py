@@ -290,7 +290,7 @@ for idx, p in enumerate(posts):
                  html.escape(desc), "blog/" + p["slug"] + "/")]
 
     page.append(f'''<!-- TITLE =============================================================== -->
-<section class="band band--slim">
+<section class="band band--slim band--read">
   <div class="wrap">
     <p class="crumb" style="margin-bottom:clamp(20px,2.4vw,32px)" data-rise>
       <a href="index.html">Home</a> <span aria-hidden="true">/</span>
@@ -320,7 +320,7 @@ for idx, p in enumerate(posts):
 </section>
 
 <!-- ARTICLE ============================================================= -->
-<section class="band band--flush-t">
+<section class="band band--flush-t band--read">
   <div class="wrap">
     <div class="article" data-rise>
 {body}

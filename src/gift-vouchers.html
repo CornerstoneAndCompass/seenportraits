@@ -62,7 +62,7 @@
 
     <!-- STEP 1, CHOOSE ======================================================== -->
     <div class="vstep" data-rise>
-      <p class="vstep__label"><span>Step 1</span> <span>Choose</span></p>
+      <p class="vstep__label"><span data-vnum></span> <span>Choose</span></p>
       <div class="cols cols-2">
         <button class="opt" type="button" data-kind="session" aria-pressed="false">
           <span class="opt__t">A session</span>
@@ -77,7 +77,7 @@
 
     <!-- STEP 2, PICK THE SESSION, only shown if "a session" is chosen ========= -->
     <div class="vstep is-hidden" data-step="session" style="margin-top:clamp(30px,3.6vw,52px)">
-      <p class="vstep__label"><span>Step 2</span> <span>Pick the session</span></p>
+      <p class="vstep__label"><span data-vnum></span> <span>Pick the session</span></p>
       <div class="cols cols-3">
         <button class="opt" type="button" aria-pressed="false"
                 data-session="Boudoir"
@@ -116,14 +116,49 @@
       </div>
     </div>
 
+    <!-- STEP 2, CHOOSE THE AMOUNT, only shown if "an amount" is chosen ======= -->
+    <div class="vstep is-hidden" data-step="amount" style="margin-top:clamp(30px,3.6vw,52px)">
+      <p class="vstep__label"><span data-vnum></span> <span>Choose the amount</span></p>
+      <p class="lead measure" style="margin-bottom:clamp(18px,2vw,26px)">Pick a value, or enter your own. They can put it towards any session.</p>
+      <div class="chip-row" style="margin-bottom:clamp(16px,1.8vw,22px)">
+        <button class="opt opt--chip" type="button" data-amount="250" aria-pressed="false">$250</button>
+        <button class="opt opt--chip" type="button" data-amount="500" aria-pressed="false">$500</button>
+        <button class="opt opt--chip" type="button" data-amount="650" aria-pressed="false">$650</button>
+        <button class="opt opt--chip" type="button" data-amount="1000" aria-pressed="false">$1,000</button>
+      </div>
+      <div class="vfields">
+        <label class="vfield">
+          <span class="vfield__l">Or your own amount</span>
+          <span class="vfield__wrap"><span class="vfield__pre" aria-hidden="true">$</span><input class="field" type="number" inputmode="numeric" min="50" step="10" placeholder="Enter an amount" data-amount-custom></span>
+        </label>
+      </div>
+    </div>
+
     <!-- STEP 3, PERSONALISE =================================================== -->
     <div class="vstep" style="margin-top:clamp(30px,3.6vw,52px)" data-rise>
-      <p class="vstep__label"><span>Step 3</span> <span>Personalise</span></p>
+      <p class="vstep__label"><span data-vnum></span> <span>Personalise</span></p>
       <p class="lead measure" style="margin-bottom:clamp(18px,2vw,26px)">Add their name, a message in your words, and the date you would like it to arrive. Buy it well ahead of a birthday and it will land on the day.</p>
-      <div class="cols cols-3">
-        <div class="tile"><span>Their name</span><span class="tile__n">On the card</span></div>
-        <div class="tile"><span>Delivery date</span><span class="tile__n">Send it when you want</span></div>
-        <div class="tile"><span>A message</span><span class="tile__n">In your words</span></div>
+      <div class="vfields vfields--3">
+        <label class="vfield">
+          <span class="vfield__l">Their name</span>
+          <input class="field" type="text" placeholder="The name on the card" data-gift-name>
+        </label>
+        <label class="vfield">
+          <span class="vfield__l">Delivery date</span>
+          <input class="field" type="date" data-gift-date>
+        </label>
+        <label class="vfield">
+          <span class="vfield__l">A message</span>
+          <input class="field" type="text" placeholder="In your words" data-gift-message>
+        </label>
+      </div>
+
+      <div class="vsummary is-hidden" data-gift-summary style="margin-top:clamp(20px,2.4vw,30px)">
+        <div>
+          <p class="kicker">Your gift card</p>
+          <p class="d4" style="margin-top:.5rem" data-gift-summary-line></p>
+          <p class="btn-row" style="margin-top:clamp(16px,2vw,22px)"><a class="btn" href="#buy"><span>Continue to checkout</span> <span class="arw" aria-hidden="true">&rarr;</span></a></p>
+        </div>
       </div>
     </div>
   </div>

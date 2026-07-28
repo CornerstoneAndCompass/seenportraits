@@ -468,33 +468,106 @@
     if (!vform) return;
     var kindBtns = vform.querySelectorAll('[data-kind]');
     var stepSession = vform.querySelector('[data-step="session"]');
+    var stepAmount = vform.querySelector('[data-step="amount"]');
     var sessionBtns = vform.querySelectorAll('[data-session]');
+    var amountBtns = vform.querySelectorAll('[data-amount]');
+    var custom = vform.querySelector('[data-amount-custom]');
     var summary = vform.querySelector('[data-summary]');
     var summaryName = vform.querySelector('[data-summary-name]');
     var summaryLine = vform.querySelector('[data-summary-line]');
     var summaryImg = vform.querySelector('[data-summary-img]');
+    var gift = vform.querySelector('[data-gift-summary]');
+    var giftLine = vform.querySelector('[data-gift-summary-line]');
+
+    var state = { kind: null, session: null, amount: null };
+
+    /* Number the steps that are actually on screen, so hiding a branch never
+       leaves the visitor looking at Step 1 followed by Step 3. */
+    function renumber() {
+      var i = 0;
+      vform.querySelectorAll('.vstep').forEach(function (step) {
+        var tag = step.querySelector('[data-vnum]');
+        if (!tag) return;
+        if (step.classList.contains('is-hidden')) { tag.textContent = ''; return; }
+        i++;
+        tag.textContent = 'Step ' + i;
+      });
+    }
+
+    function money(v) { return '$' + Number(v).toLocaleString('en-AU'); }
+
+    function describe() {
+      if (state.kind === 'session' && state.session) return 'A ' + state.session + ' session';
+      if (state.kind === 'amount' && state.amount) return money(state.amount) + ' to spend on any session';
+      return '';
+    }
+
+    function refresh() {
+      var what = describe();
+      if (!gift || !giftLine) return;
+      if (!what) { gift.classList.add('is-hidden'); return; }
+      var name = vform.querySelector('[data-gift-name]');
+      var date = vform.querySelector('[data-gift-date]');
+      var parts = [what];
+      if (name && name.value.trim()) parts.push('for ' + name.value.trim());
+      if (date && date.value) parts.push('arriving ' + date.value);
+      giftLine.textContent = parts.join(', ');
+      gift.classList.remove('is-hidden');
+    }
+
+    function press(list, active) {
+      list.forEach(function (o) { o.setAttribute('aria-pressed', o === active ? 'true' : 'false'); });
+    }
 
     kindBtns.forEach(function (b) {
       b.addEventListener('click', function () {
-        kindBtns.forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
-        b.setAttribute('aria-pressed', 'true');
-        var isSession = b.getAttribute('data-kind') === 'session';
+        press(Array.prototype.slice.call(kindBtns), b);
+        state.kind = b.getAttribute('data-kind');
+        var isSession = state.kind === 'session';
         if (stepSession) stepSession.classList.toggle('is-hidden', !isSession);
-        if (!isSession && summary) summary.classList.add('is-hidden');
+        if (stepAmount) stepAmount.classList.toggle('is-hidden', isSession);
+        if (isSession) { state.amount = null; if (custom) custom.value = ''; press(Array.prototype.slice.call(amountBtns), null); }
+        else { state.session = null; press(Array.prototype.slice.call(sessionBtns), null); if (summary) summary.classList.add('is-hidden'); }
+        renumber();
+        refresh();
       });
     });
 
     sessionBtns.forEach(function (b) {
       b.addEventListener('click', function () {
-        sessionBtns.forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
-        b.setAttribute('aria-pressed', 'true');
-        if (!summary) return;
-        summary.classList.remove('is-hidden');
-        if (summaryName) summaryName.textContent = b.getAttribute('data-session');
-        if (summaryLine) summaryLine.textContent = b.getAttribute('data-line') || '';
-        if (summaryImg) summaryImg.src = b.getAttribute('data-img') || summaryImg.src;
+        press(Array.prototype.slice.call(sessionBtns), b);
+        state.session = b.getAttribute('data-session');
+        if (summary) {
+          summary.classList.remove('is-hidden');
+          if (summaryName) summaryName.textContent = state.session;
+          if (summaryLine) summaryLine.textContent = b.getAttribute('data-line') || '';
+          if (summaryImg) summaryImg.src = b.getAttribute('data-img') || summaryImg.src;
+        }
+        refresh();
       });
     });
+
+    amountBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        press(Array.prototype.slice.call(amountBtns), b);
+        state.amount = b.getAttribute('data-amount');
+        if (custom) custom.value = '';
+        refresh();
+      });
+    });
+
+    if (custom) {
+      custom.addEventListener('input', function () {
+        state.amount = custom.value ? custom.value : null;
+        press(Array.prototype.slice.call(amountBtns), null);
+        refresh();
+      });
+    }
+
+    vform.querySelectorAll('[data-gift-name], [data-gift-date], [data-gift-message]')
+      .forEach(function (f) { f.addEventListener('input', refresh); });
+
+    renumber();
   });
 
   /* ----------------------------------------------------------------------

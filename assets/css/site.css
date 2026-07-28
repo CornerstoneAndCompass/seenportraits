@@ -315,6 +315,32 @@ input, textarea, select { font: inherit; color: inherit; }
   .priceplate .ph { aspect-ratio: 4 / 5; height: auto; min-height: 0; }
 }
 
+.vfields {
+  display: grid;
+  gap: clamp(14px, 1.8vw, 22px);
+  grid-template-columns: minmax(0, 24em);
+}
+.vfields--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 720px) { .vfields--3 { grid-template-columns: 1fr; } }
+.vfield { display: grid; gap: .5rem; }
+.vfield__l {
+  font-family: var(--f-mono);
+  font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls);
+  text-transform: uppercase;
+  color: var(--fg-mute);
+}
+.vfield__wrap { position: relative; display: flex; align-items: center; }
+.vfield__pre {
+  position: absolute;
+  left: 16px;
+  font-family: var(--f-mono);
+  font-size: 1rem;
+  color: var(--fg-mute);
+  pointer-events: none;
+}
+.vfield__wrap .field { padding-left: 32px; }
+
 /* 04  Layout ------------------------------------------------------------ */
 
 .wrap {
@@ -1275,6 +1301,18 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 .opt[aria-pressed="true"] .opt__t { color: var(--accent); }
 .opt__t { font-family: var(--f-display); font-size: 1.2rem; margin-bottom: .35rem; }
 .opt__d { color: var(--fg-mute); font-size: .95rem; }
+/* .opt is a full width card, so the amount chips need their own footprint */
+.opt--chip {
+  width: auto;
+  flex: 0 0 auto;
+  padding: .85em 1.5em;
+  text-align: center;
+  font-family: var(--f-mono);
+  font-size: var(--label-sm);
+  letter-spacing: var(--label-sm-ls);
+  border-radius: var(--radius-btn);
+}
+.opt--chip[aria-pressed="true"] { color: var(--accent); }
 .is-hidden { display: none !important; }
 .vsummary { border: 1px solid var(--rule); padding: clamp(16px, 2vw, 24px); display: flex; gap: 18px; align-items: center; }
 .vsummary .ph { width: 96px; flex: none; }
@@ -1300,7 +1338,18 @@ body.nav-open .drawer { transform: none; visibility: visible; }
 .post-item:hover .post-item__t { color: var(--accent); }
 .post-item__go { font-family: var(--f-mono); font-size: var(--label-sm); letter-spacing: var(--label-sm-ls); text-transform: uppercase; color: var(--fg-mute); }
 
-.article { max-width: 30em; margin-inline: 0; }
+/* Long-form reading: body copy was 14.72px running 100 characters a line.
+   Raised for reading, and the measure is set in em so it tracks the size. */
+.article {
+  max-width: 34em;
+  margin-inline: 0;
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+/* The band hugs the reading column, so a long-form page has no stranded space
+   beside the text and the column keeps a sane measure. Figures can still break
+   out to the full band width. */
+.band--read > .wrap { max-width: calc(34em * 1.08 + var(--gutter) * 2); }
 .article p { margin-bottom: 1.35em; color: var(--fg-mute); }
 .article h2 {
   font-family: var(--f-display);
