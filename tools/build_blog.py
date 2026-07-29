@@ -170,10 +170,7 @@ out = [meta(
     "Melbourne's latest photo shoots, studio events and client stories from SEEN Portraits in Cheltenham.",
     "blog/")]
 
-out.append(f'''<!-- FEATURED STORY ======================================================
-     A lot of people arrive here from a Google search, so a strong featured
-     story sits up top and every post links back to a session.
-     ===================================================================== -->
+out.append(f'''<!-- FEATURED STORY -->
 <section class="band band--paper">
   <div class="wrap">
     <p class="crumb" style="margin-bottom:clamp(20px,2.4vw,32px)" data-rise>
@@ -328,9 +325,7 @@ for idx, p in enumerate(posts):
   </div>
 </section>
 
-<!-- IN-ARTICLE CALL TO ACTION ===========================================
-     The whole point of the blog: send an interested reader to the session.
-     ===================================================================== -->
+<!-- IN-ARTICLE CALL TO ACTION -->
 <section class="band band--slim">
   <div class="wrap">
     <div class="capture capture--split" data-rise>

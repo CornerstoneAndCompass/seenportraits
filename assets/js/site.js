@@ -1,10 +1,5 @@
 /* ==========================================================================
    SEEN Portraits, front end behaviour
-
-   Progressive enhancement. The reveal styles in site.css hide content until
-   .is-in lands, so this file's first duty is making sure that always happens:
-   every feature is isolated behind guard(), the observer is attached before
-   .no-js is cleared, and a timeout reveals everything if anything stalls.
    ========================================================================== */
 
 (function () {

@@ -1,7 +1,6 @@
 User-agent: *
 Allow: /
 
-# the enquiry confirmation screen is not a landing page
 Disallow: /thank-you.html
 
 Sitemap: https://seenportraits.com.au/sitemap.xml

@@ -7,6 +7,23 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from build_blog import dims
 
+
+def check_css():
+    """An unterminated comment silently swallows the rest of a stylesheet."""
+    problems = []
+    for f in sorted((ROOT / "assets").rglob("*.css")):
+        t = f.read_text(encoding="utf-8")
+        if t.count("/*") != t.count("*/"):
+            problems.append("%s: %d /* against %d */, unterminated comment"
+                            % (f.name, t.count("/*"), t.count("*/")))
+        if t.count("{") != t.count("}"):
+            problems.append("%s: %d { against %d }" % (f.name, t.count("{"), t.count("}")))
+    print("css structure: %s" % ("ok" if not problems else "FAILED"))
+    for row in problems:
+        print("   ", row)
+    return problems
+
+
 IMG = re.compile(r'<img\b[^>]*>')
 ATTR = re.compile(r'(\w[\w-]*)="([^"]*)"')
 
@@ -42,4 +59,5 @@ for label, rows in (("missing files", missing),
     if len(rows) > 14:
         print("    ... and %d more" % (len(rows) - 14))
 
-sys.exit(1 if (missing or bad_dims) else 0)
+css_problems = check_css()
+sys.exit(1 if (missing or bad_dims or css_problems) else 0)
