@@ -18,7 +18,7 @@
 /* 01  Tokens ------------------------------------------------------------- */
 
 :root {
-  --em-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 18' preserveAspectRatio='none'%3E%3Cpath d='M2 12.6c46-5.2 96-8.4 148-8.9 47-.4 96 1.7 148 6.2' fill='none' stroke='%237E6944' stroke-width='3.2' stroke-linecap='round'/%3E%3Cpath d='M14 16.4c52-3.4 104-5 156-4.6' fill='none' stroke='%237E6944' stroke-width='1.6' stroke-linecap='round' opacity='.55'/%3E%3C/svg%3E");
+  --em-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 18' preserveAspectRatio='none'%3E%3Cpath d='M2 12.6c46-5.2 96-8.4 148-8.9 47-.4 96 1.7 148 6.2' fill='none' stroke='%23635336' stroke-width='3.2' stroke-linecap='round'/%3E%3Cpath d='M14 16.4c52-3.4 104-5 156-4.6' fill='none' stroke='%23635336' stroke-width='1.6' stroke-linecap='round' opacity='.55'/%3E%3C/svg%3E");
   /* brand palette */
   --ink: #191614;
   --ink-2: #241E1A;
@@ -26,21 +26,21 @@
   --umber: #4A403A;
   --taupe: #756B64;
   --mushroom: #A9A097;
-  --bone: #F4F1E9;
-  --bone-2: #E9E4D8;
-  --paper: #FBF9F3;
+  --bone: #E2DACE;
+  --bone-2: #D3C9BA;
+  --paper: #EDE7DC;
   --stone: #A69177;
-  --stone-deep: #7E6944;
-  --stone-deepest: #6E5B3A;
-  --grey: #6B665B;
+  --stone-deep: #635336;
+  --stone-deepest: #655335;
+  --grey: #5A554C;
   --grey-soft: #9A958C;
 
   /* semantic, re-declared per band */
   --bg: var(--bone);
   --fg: var(--ink);
   --fg-mute: var(--grey);
-  --rule: #D2CCBE;
-  --edge: #8A806C;
+  --rule: #A49F94;
+  --edge: #786F5E;
   --grade: sepia(.16) saturate(.88) contrast(1.03);
   --grade-dim: sepia(.16) saturate(.88) contrast(1.03) brightness(.76);
   --grade-mono: grayscale(1) contrast(1.05);
@@ -116,7 +116,7 @@
 .band--bone2 {
   --bg: var(--bone-2);
   --accent: var(--stone-deepest);
-  --em-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 18' preserveAspectRatio='none'%3E%3Cpath d='M2 12.6c46-5.2 96-8.4 148-8.9 47-.4 96 1.7 148 6.2' fill='none' stroke='%236E5B3A' stroke-width='3.2' stroke-linecap='round'/%3E%3Cpath d='M14 16.4c52-3.4 104-5 156-4.6' fill='none' stroke='%236E5B3A' stroke-width='1.6' stroke-linecap='round' opacity='.55'/%3E%3C/svg%3E");
+  --em-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 18' preserveAspectRatio='none'%3E%3Cpath d='M2 12.6c46-5.2 96-8.4 148-8.9 47-.4 96 1.7 148 6.2' fill='none' stroke='%23655335' stroke-width='3.2' stroke-linecap='round'/%3E%3Cpath d='M14 16.4c52-3.4 104-5 156-4.6' fill='none' stroke='%23655335' stroke-width='1.6' stroke-linecap='round' opacity='.55'/%3E%3C/svg%3E");
 }
 
 /* 02  Reset and base ---------------------------------------------------- */
@@ -764,6 +764,17 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   background: var(--bone-2);
   border-radius: var(--radius);
 }
+/* a breath of shadow at the frame edge, so a photograph settles into the page
+   instead of reading as a hard cut tile */
+.ph::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: inset 0 0 clamp(18px, 3vw, 46px) rgba(25, 22, 20, .24);
+}
+.ph__cap, .gal button > .ph::after { z-index: 2; }
 /* Warm toning rather than a flat grey wash. Photographs should feel like a
    toned silver print, which reads far warmer than clinical desaturation. */
 .ph img {
