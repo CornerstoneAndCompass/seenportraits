@@ -779,6 +779,27 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   box-shadow: inset 0 0 clamp(18px, 3vw, 46px) rgba(25, 22, 20, .24);
 }
 .ph__cap, .gal button > .ph::after { z-index: 2; }
+
+.split__media > .ph-3x4,
+.split__media > .ph-4x5,
+.hero--split .hero__plate {
+  border-radius:
+    50% 50% var(--radius-img) var(--radius-img) /
+    30% 30% var(--radius-img) var(--radius-img);
+}
+/* the arch would swallow a head placed high in the frame, so the crop drops
+   back toward centre inside an arched frame */
+.split__media > .ph-3x4 img,
+.split__media > .ph-4x5 img { object-position: 50% 42%; }
+@media (max-width: 720px) {
+  .split__media > .ph-3x4,
+  .split__media > .ph-4x5,
+  .hero--split .hero__plate {
+    border-radius:
+      44% 44% var(--radius-img) var(--radius-img) /
+      18% 18% var(--radius-img) var(--radius-img);
+  }
+}
 /* Warm toning rather than a flat grey wash. Photographs should feel like a
    toned silver print, which reads far warmer than clinical desaturation. */
 .ph img {
@@ -838,7 +859,7 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   padding: clamp(44px, 5vw, 76px) clamp(24px, 4vw, 68px) clamp(44px, 5vw, 76px)
            max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
 }
-.hero--split .hero__plate { position: relative; min-height: min(58vw, 700px); overflow: hidden; border-radius: var(--radius-img); }
+.hero--split .hero__plate { position: relative; min-height: min(58vw, 700px); overflow: hidden; }
 .hero--split .hero__plate img {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -1711,4 +1732,31 @@ body.nav-open .drawer { transform: none; visibility: visible; }
   .vsummary { flex-direction: column; align-items: flex-start; }
   .dl > div { grid-template-columns: 1fr; gap: 4px; }
   .mapframe iframe { height: 260px; }
+}
+
+
+/* Editorial labels read as prose, not as signage. Capitals tolerate wide
+   tracking; lowercase does not, so the tracking eases with the case. */
+.kicker,
+.bigquote__by,
+.plate__by,
+.price__from,
+.mono-note,
+.form-note,
+.quote__by,
+.trust__d,
+.post-item__meta,
+.dl dt,
+.vfield__l,
+.vstep__label,
+.lbox__cap,
+.hero__meta,
+.foot__rate,
+.pcard__eyebrow,
+.nav__panel .sub,
+.crumb,
+.util,
+.foot h4 {
+  text-transform: none;
+  letter-spacing: .055em;
 }
