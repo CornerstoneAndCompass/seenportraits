@@ -47,6 +47,7 @@
   --dock-h: 78px;
   --mast-h: 84px;
   --btn-edge: var(--stone-deep);
+  --btn-hover: #C4B6A2;
   --accent: var(--stone-deep);
   --field: #FFFFFF;
 
@@ -423,6 +424,7 @@ h1, h2, h3, h4, h5, h6, strong, b, th,
 /* 05  Buttons ----------------------------------------------------------- */
 
 .btn {
+  isolation: isolate;
   --btn-bg: var(--stone);
   --btn-fg: var(--ink);
   display: inline-flex;
@@ -450,14 +452,14 @@ h1, h2, h3, h4, h5, h6, strong, b, th,
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
-  background: var(--stone-deep);
+  z-index: -1;
+  background: var(--btn-hover);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform .62s var(--ease-out);
 }
 .btn:hover::before { transform: scaleX(1); }
-.btn:hover { color: var(--bone); border-color: var(--stone-deep); }
+.btn:hover { border-color: var(--btn-hover); }
 
 .btn--ghost {
   --btn-bg: transparent;
@@ -494,6 +496,7 @@ h1, h2, h3, h4, h5, h6, strong, b, th,
 /* Links read as buttons, kept elegant: a hairline outline, generous
    padding and wide tracking rather than a heavy fill. */
 .tlink {
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   gap: .75em;
@@ -515,8 +518,8 @@ h1, h2, h3, h4, h5, h6, strong, b, th,
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
-  background: var(--stone-deep);
+  z-index: -1;
+  background: var(--btn-hover);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform .62s var(--ease-out);
@@ -524,7 +527,7 @@ h1, h2, h3, h4, h5, h6, strong, b, th,
 .tlink > *, .tlink span { position: relative; z-index: 1; }
 .tlink span[aria-hidden] { transition: transform .45s var(--ease-out); }
 .tlink:hover::before { transform: scaleX(1); }
-.tlink:hover { color: var(--bone); border-color: var(--stone-deep); }
+.tlink:hover { border-color: var(--btn-hover); }
 .tlink:hover span[aria-hidden] { transform: translateX(4px); }
 
 /* a genuine inline link, for use inside a sentence */
