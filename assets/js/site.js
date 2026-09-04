@@ -603,6 +603,50 @@
     });
   });
 
+  /* ----------------------------------------------------------------------
+     Shop: carry the artwork they clicked into the enquiry
+     ------------------------------------------------------------------- */
+
+  guard('enquire product', function () {
+    var links = document.querySelectorAll('[data-enquire-product]');
+    if (!links.length) return;
+    var form = document.querySelector('form.seenform');
+    if (!form) return;
+
+    var message = form.querySelector('textarea[name="message"]');
+    var PREFIX = 'Enquiring about: ';
+
+    // Written on first click rather than shipped empty on every form, so a page
+    // with no products posts exactly what it posted before.
+    function hidden() {
+      var el = form.querySelector('input[name="product"]');
+      if (!el) {
+        el = document.createElement('input');
+        el.type = 'hidden';
+        el.name = 'product';
+        form.appendChild(el);
+      }
+      return el;
+    }
+
+    Array.prototype.forEach.call(links, function (a) {
+      a.addEventListener('click', function () {
+        var name = a.getAttribute('data-enquire-product');
+        if (!name) return;
+        hidden().value = name;
+        // The studio reads the message, so the artwork has to be in it. Replace
+        // the line rather than stack one per card they looked at, and leave
+        // anything the visitor has already typed alone.
+        if (message) {
+          var lines = message.value.split('\n');
+          if (lines[0].indexOf(PREFIX) === 0) lines[0] = PREFIX + name;
+          else lines.unshift(PREFIX + name, '');
+          message.value = lines.join('\n');
+        }
+      });
+    });
+  });
+
   guard('year', function () {
     var yr = document.querySelector('[data-year]');
     if (yr) yr.textContent = new Date().getFullYear();
